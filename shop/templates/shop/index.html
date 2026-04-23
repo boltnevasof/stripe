@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Stripe demo</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+    ul { padding-left: 1.2rem; }
+    a { color: #5469d4; }
+  </style>
+</head>
+<body>
+  <h1>Stripe demo</h1>
+
+  <h2>Items</h2>
+  <ul>
+    {% for item in items %}
+      <li>
+        <a href="/item/{{ item.id }}">{{ item.name }}</a>
+        — {{ item.price }} {{ item.currency|upper }}
+        (<a href="/item-intent/{{ item.id }}">PaymentIntent</a>)
+      </li>
+    {% empty %}
+      <li>Пока пусто. Добавьте Item в <a href="/admin/">админке</a>.</li>
+    {% endfor %}
+  </ul>
+
+  <h2>Orders</h2>
+  <ul>
+    {% for o in orders %}
+      <li><a href="/order/{{ o.id }}">Order #{{ o.id }}</a> — {{ o.total }} {{ o.currency|upper }}</li>
+    {% empty %}
+      <li>Пока пусто. Соберите Order в <a href="/admin/">админке</a>.</li>
+    {% endfor %}
+  </ul>
+
+  <p><a href="/admin/">Админка</a></p>
+</body>
+</html>

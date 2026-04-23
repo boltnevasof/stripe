@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Buy {{ item.name }}</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+    button { padding: .6rem 1.2rem; font-size: 1rem; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>{{ item.name }}</h1>
+  <p>{{ item.description }}</p>
+  <p><strong>{{ item.price }} {{ item.currency|upper }}</strong></p>
+  <button id="buy-button">Buy</button>
+
+  <script src="https://js.stripe.com/v3/"></script>
+  <script>
+    const stripe = Stripe("{{ publishable_key }}");
+    document.getElementById("buy-button").addEventListener("click", function () {
+      fetch("/buy/{{ item.id }}", { method: "GET" })
+        .then(function (response) { return response.json(); })
+        .then(function (session) { return stripe.redirectToCheckout({ sessionId: session.id }); })
+        .then(function (result) {
+          if (result && result.error) { alert(result.error.message); }
+        });
+    });
+  </script>
+</body>
+</html>

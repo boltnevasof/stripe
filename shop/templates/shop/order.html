@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Order #{{ order.id }}</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+    button { padding: .6rem 1.2rem; font-size: 1rem; cursor: pointer; }
+    .muted { color: #555; }
+  </style>
+</head>
+<body>
+  <h1>Order #{{ order.id }}</h1>
+  <ul>
+    {% for item in order.items.all %}
+      <li>{{ item.name }} — {{ item.price }} {{ item.currency|upper }}</li>
+    {% endfor %}
+  </ul>
+  <p><strong>Итого: {{ order.total }} {{ order.currency|upper }}</strong>
+     <span class="muted">(без учёта скидки/налогов — Stripe применит их в checkout)</span></p>
+
+  {% if order.discount %}
+    <p class="muted">Скидка: {{ order.discount.name }}</p>
+  {% endif %}
+  {% if order.taxes.all %}
+    <p class="muted">Налоги:
+      {% for t in order.taxes.all %}{{ t.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
+    </p>
+  {% endif %}
+
+  <button id="buy-button">Pay</button>
+
+  <script src="https://js.stripe.com/v3/"></script>
+  <script>
+    const stripe = Stripe("{{ publishable_key }}");
+    document.getElementById("buy-button").addEventListener("click", function () {
+      fetch("/buy-order/{{ order.id }}", { method: "GET" })
+        .then(function (response) { return response.json(); })
+        .then(function (session) { return stripe.redirectToCheckout({ sessionId: session.id }); })
+        .then(function (result) {
+          if (result && result.error) { alert(result.error.message); }
+        });
+    });
+  </script>
+</body>
+</html>

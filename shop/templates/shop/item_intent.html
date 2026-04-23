@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Pay {{ item.name }} (Intent)</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+    #payment-element { margin: 1rem 0; }
+    button { padding: .6rem 1.2rem; font-size: 1rem; cursor: pointer; }
+    #error { color: #c00; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>{{ item.name }}</h1>
+  <p>{{ item.description }}</p>
+  <p><strong>{{ item.price }} {{ item.currency|upper }}</strong></p>
+
+  <form id="payment-form">
+    <div id="payment-element"></div>
+    <button id="submit" type="submit">Pay</button>
+    <div id="error" role="alert"></div>
+  </form>
+
+  <script src="https://js.stripe.com/v3/"></script>
+  <script>
+    const stripe = Stripe("{{ publishable_key }}");
+    let elements;
+
+    async function init() {
+      const res = await fetch("/intent/{{ item.id }}", { method: "GET" });
+      const { client_secret } = await res.json();
+      elements = stripe.elements({ clientSecret: client_secret });
+      const paymentElement = elements.create("payment");
+      paymentElement.mount("#payment-element");
+    }
+
+    document.getElementById("payment-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const { error } = await stripe.confirmPayment({
+        elements,
+        confirmParams: { return_url: window.location.origin + "/success/" },
+      });
+      if (error) document.getElementById("error").textContent = error.message;
+    });
+
+    init();
+  </script>
+</body>
+</html>

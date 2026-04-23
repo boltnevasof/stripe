@@ -1,0 +1,4 @@
+Django>=4.2,<5.0
+stripe>=10.0,<13.0
+python-dotenv>=1.0
+gunicorn>=21.2
