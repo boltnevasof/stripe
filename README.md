@@ -2,6 +2,20 @@
 
 Django-бэкенд на тестовое задание: модель `Item`, `GET /item/<id>` отдаёт HTML с кнопкой Buy, `GET /buy/<id>` создаёт `stripe.checkout.Session` и возвращает его id. JS на странице делает `stripe.redirectToCheckout`.
 
+## Демо
+
+Приложение задеплоено и доступно публично:
+
+- **Главная:** https://stripe-production-c8e5.up.railway.app
+- **Пример товара:** https://stripe-production-c8e5.up.railway.app/item/1
+- **Пример заказа (несколько Item + скидка + налог):** https://stripe-production-c8e5.up.railway.app/order/1
+- **PaymentIntent вместо Session:** https://stripe-production-c8e5.up.railway.app/item-intent/1
+- **Админка:** https://stripe-production-c8e5.up.railway.app/admin/
+  - логин: `admin`
+  - пароль: `0000`
+
+Для оплаты используй тестовую карту Stripe: `4242 4242 4242 4242`, срок — любой будущий (напр. `12/34`), CVC — любые 3 цифры.
+
 ## Запуск
 
 Нужны Stripe test-ключи: https://dashboard.stripe.com/test/apikeys
@@ -68,7 +82,7 @@ python manage.py runserver
 - [x] `Discount` → Stripe Coupon, `Tax` → Stripe TaxRate; создаются в Stripe лениво при первом использовании и кэшируются
 - [x] `Item.currency` + 2 пары Stripe-ключей, выбор по валюте товара
 - [x] `PaymentIntent` — `/intent/<id>` и `/item-intent/<id>` со Stripe Elements
-- [ ] Удалённый сервер — не разворачивал, запуск локальный
+- [x] Удалённый сервер — задеплоено на Railway, ссылки и креды в разделе [«Демо»](#демо)
 
 ## Стек
 
