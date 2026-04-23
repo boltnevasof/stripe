@@ -12,5 +12,6 @@ COPY . .
 
 EXPOSE 8000
 
-# migrate на старте — удобно для демо; для прода вынесите миграции в отдельный шаг
-CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"]
+# migrate + (опционально) создание суперюзера из env vars — удобно для демо,
+# чтобы не лазить в shell контейнера на проде.
+CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py createsuperuser --noinput 2>/dev/null || true; python manage.py runserver 0.0.0.0:8000"]
